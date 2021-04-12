@@ -1,0 +1,43 @@
+# EJERCICIO 1 DAVID MARTIN VELA
+# Calcula la probabilidad de que al lanzar al aire dos monedas, salgan
+# a) Dos caras
+# b) Dos cruces
+# c) Una cara y una cruz
+# Escribe una función que simule el lanzamiento. Repite 15000 veces la simulación e indica las 
+# diferencias entre los valores observados y los teóricos.
+
+# Solucion: A pesar de que las monedas son similares supongamos que se pueden distinguir, llamémoslas # moneda 1 y moneda 2. Ahora tenemos cuatro posibles resultados: Cara-Cara, Cara-Cruz, Cruz-Cara, 
+# Cruz-Cruz, si estos 4 resultados son igualmente probables entonces esta claro que las respectivas 
+# probabilidades son: 
+# a) Dos caras es 1/4 
+# b) Dos cruzes es 1/4
+# c) Una cara y una cruz es 2/4 = 1/2.
+# Creamos una función para simular n lanzamientos de las dos monedas donde devolvemos para cada
+# moneda una tabla que contabiliza el numero de caras y cruces que se obtienen con cada,
+# y el calculo de la frecuencia de los sucesos comentados anteriormente (la suma de las 
+# veces que se producen cada uno de ellos entre el total)
+ 
+# Para probar la función solo hay que cargar el fichero y llamarla con su nombre el argumento el
+# numero de lanzamientos que se quiera simular. Se adjunta una foto ejemplo de como seria el 
+# resultado (ejemplo_ejecucion_ejercicio_2.png).
+# simular_dos_monedas()
+# La interpretación frecuentista nos dice que las probabilidades se entienden como una aproximación
+# matemática de frecuencias relativas cuando la frecuencia total tiende a infinito, elegimos un
+# numero de ensayos n suficientemente grande, y calculamos la proporción (lo que devolvemos en 
+# nuestra funcion), nuestra proporción sera cercana a la probabilidad teórica calculada si n es
+# grande. Se ve que esto es cierto realizando el experimento aumentando el número de lanzamientos n.
+
+
+simular_dos_monedas <- function (n = 15000){
+	moneda_1 <- sample(c("Cara", "Cruz"), n, replace = TRUE)
+	moneda_2 <- sample(c("Cara", "Cruz"), n, replace = TRUE)
+	prob_cara_cara <- sum(moneda_1 == "Cara" & moneda_2 == "Cara") / n
+	prob_cruz_cruz <- sum(moneda_1 == "Cruz" & moneda_2 == "Cruz") / n
+	prob_cara_cruz <- sum((moneda_1 == "Cara" & moneda_2 == "Cruz") | (moneda_1 == "Cruz" & moneda_2 == "Cara")) / n
+	
+	return(list("Resultados Moneda 1" = table(moneda_1),
+			"Resultados Moneda 2" = table(moneda_2),
+			"Probabilidad de sacar ambas cara = " = prob_cara_cara, 
+			"Probabilidad de sacar ambas cruz" = prob_cruz_cruz, 
+			"Probabilidad de sacar cruz y cara" = prob_cara_cruz))
+}
