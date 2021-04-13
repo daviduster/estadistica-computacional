@@ -18,15 +18,16 @@
 # que simule el lanzamiento de dos dados y devuelva la suma, y replicando el proceso n veces con la función
 # replicate.
 
-# Para llamar a la funcion, bastaría con introducir el número de veces que se quiere simular el lanzamiento de 
-# los dos dados, un ejemplo seria (ejemplo en el archivo ejemplo_ejecucion_ejercicio_2)
+# Para probar la función solo hay que cargar el fichero en R y llamarla con su nombre junto al argumento, 
+# bastaría con introducir el número de veces que se quiere simular el lanzamiento de 
+# los dos dados, un ejemplo seria (ejemplo en el archivo ejemplo_ejecucion_ejercicio_2.png)
 # simular_dos_dados(100000), para mostrar la superficie hemos creado la funcion f_suma para que outer la
 # utilize (aunque visualmente seria lo mismo que multiplicar elemento por elemento de cada vector)
 # para visualizar la grafica se llamaría añadiendo el argumento TRUE
 # simular_dos_dados(120, TRUE)
 # Mostrar la superficie es computacionalmente caro debido a la multiplicación elemento a elemento de outer y a 
 # mostrar de persp, por eso es mejor quedarnos con menos repeticiones ya que se ve visualmente el resultado 
-# (adjuntamos archivo grafica_2)
+# (adjuntamos archivo grafica_2.png)
 
 # Para la probabilidad, mayor que 9 significa 10, 11 o 12. La totalidad de posibilidades es 36.
 # 4 + 6 es 10, 5 + 5 es 10, 5 + 6 es 11, 6 + 4 es 10, 6 + 5 es 11, 6 + 6 es 12
@@ -39,6 +40,8 @@ simular_dos_dados <- function(n = 12, plot = FALSE) {
 	caras <- 1:6
 	dice_1 <- sample(caras, size = n, replace = TRUE)
 	dice_2 <- sample(caras, size = n, replace = TRUE)
+
+	# Frecuencias
 	freq_1 <- table(dice_1)
 	freq_2 <- table(dice_2)
 	freq_relativa_1 <- freq_1 / n
@@ -52,13 +55,14 @@ simular_dos_dados <- function(n = 12, plot = FALSE) {
 		z <- outer(sorted_dice_1, sorted_dice_2, f_suma)
 
 		persp(z,
-		main = "Plot surface of probabilities",
+		main = "Superficie obtenida ejercicio 2",
 		xlab = "dice_1",
 		ylab = "dice_2",
 		zlab = "Outer/ Multiplication",
 		ticktype = "simple")
 	}
 
+	# Probabilidad de que la suma sea mayor que 9
 	prob_9 <- sum((dice_1 + dice_2) > 9 ) / n
 
 	return( list("Frecuencias primer dado=" =freq_1,"Frecuencias segundo dado=" = freq_2, 

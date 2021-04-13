@@ -17,9 +17,9 @@
 # y el calculo de la frecuencia de los sucesos comentados anteriormente (la suma de las 
 # veces que se producen cada uno de ellos entre el total)
  
-# Para probar la función solo hay que cargar el fichero y llamarla con su nombre el argumento el
-# numero de lanzamientos que se quiera simular. Se adjunta una foto ejemplo de como seria el 
-# resultado (ejemplo_ejecucion_ejercicio_2.png).
+# Para probar la función solo hay que cargar el fichero en R y llamarla con su nombre junto al 
+# argumento, numero de lanzamientos que se quiera simular. Se adjunta una foto ejemplo de 
+# como seria el resultado (ejemplo_ejecucion_ejercicio_2.png).
 # simular_dos_monedas()
 # La interpretación frecuentista nos dice que las probabilidades se entienden como una aproximación
 # matemática de frecuencias relativas cuando la frecuencia total tiende a infinito, elegimos un
