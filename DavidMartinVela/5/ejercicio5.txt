@@ -12,18 +12,30 @@
 
 # Solución:  Para probar las funciones solo hay que cargar el fichero y 
 # llamarlas con su nombre y argumentos
-# Respecto al caso contrario, esto significaría que intentamos lanzar de nuevo
-# ambas monedas para intentar nuevamente obtener uno de los dos primeros escenarios. 
-# Luego aunque la probabilidad de sacar cara sería 3/4 y cruz 1/4. En nuestro caso
-# con este detalle tendríamos que P[X = 1] = P[X = 2] = 1/2. Esta es la forma típica de simular
-# un lanzamiento de moneda justo utilizando una moneda injusta, y esa sería nuestra función de densidad
-# / masa de probabilidad
+# Primero, si la probabilidad de que salga cara es tres veces la probabilidad de que
+# salga cruz, sea P[Cara] = 3*P[Cruz] = p. Entonces, como P[Cara] + P[Cruz] = 1, obtenemos
+# 3(1-p) = p y p = 3/4, por lo tanto una secuencia de dos monedas independientes:
+# Pr[Cara Cara]=(3/4)^2=9/16
+# Pr[Cara Cruz]=(3/4)(1/4)=3/16
+# Pr[Cruz Cara]=(1/4)(3/4)=3/16
+# Pr[Cruz Cruz]=(1/4)^2=1/16
+# Pero claro, si después de dos lanzamientos de moneda no obtenemos ni Cara Cruz ni
+# Cruz Cara, entonces lanzamos las dos monedas de nuevo, luego como la probabilidad
+# de que P[Cara Cruz] = P[Cruz Cara], debemos de tener que
+# Pr[X=1]=Pr[X=2]=1/2
+# También podemos calcular esto así:
+# Pr[X=1]=Pr[Cara Cruz] / (Pr[Cara Cruz]+Pr[Cruz Cara])=(3/16)(6/16)=1/2,
+# y de igual manera con Pr[X=2]
 
-# Para simular esta variable aleatoria, creamos una función recursiva lanzas_dos_monedas_truncadas
+# Esta es la forma típica de simular un lanzamiento de moneda justo utilizando 
+# una moneda injusta, y esa sería nuestra función de densidad / masa de probabilidad
+
+# Para simular esta variable aleatoria, creamos una función recursiva (que se 
+# llama a ella misma) lanzas_dos_monedas_truncadas
 # sin argumento, la cuál recrea el lanzamiento de la moneda truncada dos veces 
 # añadiendo la condición de que si no sale ni el caso 1 ni el caso 2, repetimos de nuevo el 
-# lanzamiento de las dos monedas hasta que salga el caso 1 o el caso 2. La función aunque no es necesario
-# puede llamarse de la siguiente manera.
+# lanzamiento de las dos monedas hasta que salga el caso 1 o el caso 2.
+# La función (aunque no es necesario) puede llamarse de la siguiente manera.
 # lanzas_dos_monedas_truncadas()
 
 # Después de crear esta función, creamos otra función simular_dos_monedas con el argumento 
