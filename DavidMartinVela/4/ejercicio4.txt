@@ -1,0 +1,130 @@
+# EJERCICIO 4 DAVID MARTIN VELA
+# Una urna contiene 5 bolas rojas, 8 blancas y 3 negras.
+# 1. Escribe sendas funciones que simulen la extracción con reemplazamiento y sin reemplazamiento de 
+# cinco bolas al azar.
+# 2. Calcula las probabilidades de los siguientes sucesos.
+# 3. Repite 15000 veces la simulación e indica las diferencias entre los valores observados y 
+# los teóricos.
+# a) Que haya 2 bolas blancas
+# b) que haya 2 bolas blancas y una roja
+# c) que haya al menos 2 bolas negras
+
+# Solución:  Para probar las funciones solo hay que cargar el fichero y 
+# llamarlas con su nombre. 
+
+# Primero, creamos una función extraccion_urna para simular n_repeticiones extracciones de 
+# n_bolas 5 bolas con o sin reemplazamiento que, lo cuál controlamos con un parámetro boleano reemplazamiento, 
+# el calculo empírico de los sucesos que se piden anteriormente es la suma de las 
+# veces que se producen cada uno de ellos entre el total. Para ello en la función recorremos las columnas
+# del parámetro simulacion, el cual contiene el conjunto de experimentos de 5 en 5 n_repeticiones,
+# contamos los casos que se piden y calculamos la probabilidad dividiendo entre el total.
+# Finalmente la función devuelve una tabla con las frecuencias de cada bola, junto a las probabilidades
+# calculadas empíricamente mediante las observaciones.
+
+# Un ejemplo de ejecución sería:
+# extraccion_urna(n_repeticiones = 15000, n_bolas = 5, reemplazamiento = TRUE)
+# extraccion_urna(n_repeticiones = 15000, n_bolas = 5, reemplazamiento = FALSE)
+
+# Segundo, las probabilidades teóricas pueden calcularse con la distribución multinomial (con reemplazamiento)
+# y la hipergeométrica Multivariante (sin reemplazamiento), sumando las probabilidades de los posibles casos 
+# que se piden. Para utilizar la distribución hipergeométrica en R hemos tenido que instalar el paquete extraDistr
+# mediante la orden:
+# install.packages("extraDistr")
+# Actualmente esta comentada en el código pero si no dispone de ese paquete se puede descomentar para la función 
+# instale el paquete.
+
+# Para llamar a la función basta con escribir su nombre junto al tipo de reemplazamiento que se desea
+# probabilidades_teoricas(reemplazamiento = TRUE)
+# probabilidades_teoricas(reemplazamiento = FALSE)
+
+# Adjuntamos una imagen con ejemplo de ejecución de los 4 casos comentados anteriormente (ejemplo_ejecucion_ejericio_4.png) y vemos que los valores 
+# observados coinciden con los teóricos cuando el número de repeticiones es suficientemente grande
+
+probabilidades_teoricas = function(reemplazamiento = FALSE){		
+	
+	n_bolas <- c("Blanca" = 8, "Roja" = 5, "Negra" = 3)
+	extracciones <- 5
+
+	if(reemplazamiento){
+		# Probabilidad 2 blancas, suma de la probabilidad de cada caso
+		prob_2_blancas <- dmultinom(x=c("Blanca" = 2, "Roja" = 3, "Negra" = 0), prob = n_bolas) + 
+				dmultinom(x=c("Blanca" = 2, "Roja" = 2, "Negra" = 1), prob = n_bolas) +
+				dmultinom(x=c("Blanca" = 2, "Roja" = 1, "Negra" = 2), prob = n_bolas) +
+				dmultinom(x=c("Blanca" = 2, "Roja" = 0, "Negra" = 3), prob = n_bolas);
+
+		# Probabilidad 2 blancas 1 roja, suma de la probabilidad de cada caso	
+		prob_2_blancas_1_roja <- dmultinom(x=c("Blanca" = 2, "Roja" = 1, "Negra" = 2), prob = n_bolas);
+
+		# Probabilidad al menos 2 negras, suma de la probabilidad de cada caso
+		prob_al_menos_2_negras <- dmultinom(x=c("Blanca" = 0, "Roja" = 2, "Negra" = 3), prob = n_bolas) + 
+					dmultinom(x=c("Blanca" = 1, "Roja" = 1, "Negra" = 3), prob = n_bolas) + 
+					dmultinom(x=c("Blanca" = 2, "Roja" = 0, "Negra" = 3), prob = n_bolas) + 
+					dmultinom(x=c("Blanca" = 0, "Roja" = 3, "Negra" = 2), prob = n_bolas) + 
+					dmultinom(x=c("Blanca" = 1, "Roja" = 2, "Negra" = 2), prob = n_bolas) + 
+					dmultinom(x=c("Blanca" = 2, "Roja" = 1, "Negra" = 2), prob = n_bolas) + 
+					dmultinom(x=c("Blanca" = 3, "Roja" = 0, "Negra" = 2), prob = n_bolas);
+	} else {
+		# install.packages("extraDistr");
+		library("extraDistr");
+	
+		prob_2_blancas <- dmvhyper(x=c("Blanca" = 2, "Roja" = 3, "Negra" = 0), n = n_bolas, k = extracciones) + 
+				dmvhyper(x=c("Blanca" = 2, "Roja" = 2, "Negra" = 1), n = n_bolas, k = extracciones) +
+				dmvhyper(x=c("Blanca" = 2, "Roja" = 1, "Negra" = 2), n = n_bolas, k = extracciones) +
+				dmvhyper(x=c("Blanca" = 2, "Roja" = 0, "Negra" = 3), n = n_bolas, k = extracciones);
+
+		# Probabilidad 2 blancas 1 roja, suma de la probabilidad de cada caso	
+		prob_2_blancas_1_roja <- dmvhyper(x=c("Blanca" = 2, "Roja" = 1, "Negra" = 2), n = n_bolas, k = extracciones);
+
+		# Probabilidad al menos 2 negras, suma de la probabilidad de cada caso
+		prob_al_menos_2_negras <- dmvhyper(x=c("Blanca" = 0, "Roja" = 2, "Negra" = 3), n = n_bolas, k = extracciones) + 
+					dmvhyper(x=c("Blanca" = 1, "Roja" = 1, "Negra" = 3), n = n_bolas, k = extracciones) + 
+					dmvhyper(x=c("Blanca" = 2, "Roja" = 0, "Negra" = 3), n = n_bolas, k = extracciones) + 
+					dmvhyper(x=c("Blanca" = 0, "Roja" = 3, "Negra" = 2), n = n_bolas, k = extracciones) + 
+					dmvhyper(x=c("Blanca" = 1, "Roja" = 2, "Negra" = 2), n = n_bolas, k = extracciones) + 
+					dmvhyper(x=c("Blanca" = 2, "Roja" = 1, "Negra" = 2), n = n_bolas, k = extracciones) + 
+					dmvhyper(x=c("Blanca" = 3, "Roja" = 0, "Negra" = 2), n = n_bolas, k = extracciones);
+	}
+	
+	return(list("Probabilidad 2 blancas="=prob_2_blancas, 
+		"Probabilidad 2 blancas y 1 roja="=prob_2_blancas_1_roja, 
+		"Probabilidad al menos 2 negras="=prob_al_menos_2_negras))
+} 
+
+extraccion_urna = function(n_repeticiones = 16, n_bolas = 5, reemplazamiento = FALSE){
+	# Generamos vector de bolas
+	bolas <- rep( c("Roja", "Blanca", "Negra"), times = c(5,8,3))
+
+	# Repeticiones n_repeticiones veces la extracción de n_bolas 
+	simulacion <- replicate(n_repeticiones, sample(bolas, size = n_bolas, replace = reemplazamiento))
+
+	# Vemos los casos cuya probabilidad hay que calcular
+	casos_2_blancas <- 0
+	casos_2_blancas_1_roja <- 0
+	casos_al_menos_2_negras <- 0
+
+	for(i in 1:n_repeticiones) {
+		if(length(which(simulacion[,i] == "Blanca")) == 2){
+			casos_2_blancas <- casos_2_blancas + 1
+		}
+
+		if(length(which(simulacion[,i] == "Blanca")) == 2 && length(which(simulacion[,i] == "Roja")) == 1){
+			casos_2_blancas_1_roja <- casos_2_blancas_1_roja + 1
+		}
+
+		if(length(which(simulacion[,i] == "Negra")) > 1){
+			casos_al_menos_2_negras <- casos_al_menos_2_negras + 1
+		}
+		
+	}
+	
+	# La probabilidad es los casos favorables entre el total
+	prob_2_blancas <- casos_2_blancas / n_repeticiones
+	prob_2_blancas_1_roja <- casos_2_blancas_1_roja / n_repeticiones
+	prob_al_menos_2_negras <- casos_al_menos_2_negras / n_repeticiones
+
+
+	return(list("Frecuencias="=table(simulacion), 
+		"Probabilidad 2 blancas="=prob_2_blancas, 
+		"Probabilidad 2 blancas y 1 roja="=prob_2_blancas_1_roja, 
+		"Probabilidad al menos 2 negras="=prob_al_menos_2_negras))
+}
