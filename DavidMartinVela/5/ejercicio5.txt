@@ -1,0 +1,83 @@
+# EJERCICIO 5 DAVID MARTIN VELA
+# Disponemos de una moneda que está trucada, de tal modo que la probabilidad de obtener cara es 
+# triple que la de obtener cruz.
+# Considera la variable X definida del siguiente modo: Lanzamos la moneda dos veces consecutivas. 
+# Si se obtiene Cara en el primer lanzamiento y Cruz en el segundo, Tomamos X=1. (caso 1)
+# Si se obtiene Cruz en el primer lanzamiento y Cara en el segundo, Tomamos X=2. (caso 2)
+# En caso contrario se vuelve a lanzar la moneda dos veces.
+# 1. Calcula la función de densidad de la variable X
+# 2. Escribe una función que simule esta variable aleatoria.
+# 3. Repite 15000 veces la simulación e indica la diferencia entre los valores observados 
+# y los teóricos
+
+# Solución:  Para probar las funciones solo hay que cargar el fichero y 
+# llamarlas con su nombre y argumentos
+# Respecto al caso contrario, esto significaría que intentamos lanzar de nuevo
+# ambas monedas para intentar nuevamente obtener uno de los dos primeros escenarios. 
+# Luego aunque la probabilidad de sacar cara sería 3/4 y cruz 1/4. En nuestro caso
+# con este detalle tendríamos que P[X = 1] = P[X = 2] = 1/2. Esta es la forma típica de simular
+# un lanzamiento de moneda justo utilizando una moneda injusta, y esa sería nuestra función de densidad
+# / masa de probabilidad
+
+# Para simular esta variable aleatoria, creamos una función recursiva lanzas_dos_monedas_truncadas
+# sin argumento, la cuál recrea el lanzamiento de la moneda truncada dos veces 
+# añadiendo la condición de que si no sale ni el caso 1 ni el caso 2, repetimos de nuevo el 
+# lanzamiento de las dos monedas hasta que salga el caso 1 o el caso 2. La función aunque no es necesario
+# puede llamarse de la siguiente manera.
+# lanzas_dos_monedas_truncadas()
+
+# Después de crear esta función, creamos otra función simular_dos_monedas con el argumento 
+# n veces que queremos repetir el lanzamiento de las dos monedas, hacemos detalle en que a
+# la función replicate le pasamos la función anterior. Contamos los casos que se cumple 
+# el caso 1 o el caso 2 y vemos la proporción de estos, una ejecución con un alto número de 
+# repeticiones hará que los valores observados coincidan con los teóricos.
+# Un ejemplo de ejecución es:
+# simular_dos_monedas(15000)
+# Añadimos una imagen de una ejecución, ejemplo_ejecucion_ejercicio_5.png
+# Vemos que los valores observados son muy parecidos a los teóricos, 1/2
+ 
+
+lanzas_dos_monedas_truncadas = function(){
+	moneda <- c("Cara", "Cruz")
+	# Lanzamiento de dos monedas
+	dos_monedas <- sample(moneda, prob = c(3/4,1/4), size = 2, replace = TRUE)
+	
+	# Condiciones que tenemos que comprobar 
+	cara_cruz <- dos_monedas[1] == "Cara" && dos_monedas[2] == "Cruz"
+	cruz_cara <- dos_monedas[1] == "Cruz" && dos_monedas[2] == "Cara"
+	
+	# Se tiene que obtener cara|cruz o cruz|cara, de otra manera volvemos a
+	# lanzar la moneda dos veces
+	if( cara_cruz || cruz_cara){
+		return(dos_monedas)
+	}	else {
+		return(lanzas_dos_monedas_truncadas())
+	}
+}
+
+simular_dos_monedas = function(n = 10){
+	# Simulamos variable aleatoria
+	simulacion <- replicate(n, lanzas_dos_monedas_truncadas())
+	
+	# Casos favorables
+	casos_cara_cruz <- 0
+	casos_cruz_cara <- 0
+	for (i in 1:n){
+		if (simulacion[,i][1] == "Cara" && simulacion[,i][2] == "Cruz"){
+			casos_cara_cruz <- 	casos_cara_cruz + 1
+		}
+		
+		if (simulacion[,i][1] == "Cruz" && simulacion[,i][2] == "Cara"){
+			casos_cruz_cara <- 	casos_cruz_cara + 1
+		}		
+		
+	# Proporcion 
+	prob_cara_cruz <- casos_cara_cruz / n
+	prob_cruz_cara <- casos_cruz_cara / n
+	
+	}
+	
+	return(list("Frecuencias="=table(simulacion), 
+		"Proporción primera cara segunda cruz ="=prob_cara_cruz, 
+		"Proporción primera cruz segunda cara ="=prob_cruz_cara))
+}
