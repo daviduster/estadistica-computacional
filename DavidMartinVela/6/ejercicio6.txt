@@ -1,0 +1,99 @@
+# EJERCICIO 6 DAVID MARTIN VELA
+# Considera una partícula que en el tiempo t=1, está en el punto, P=(0,0), del plano y se desplaza del siguiente modo:
+
+# En cada tiempo t, t=2,3,... se lanzan tres dados.
+# Si el primer dado es 1 o 2, el punto se mueve una unidad a la derecha, si no lo hace a la izquierda.
+# Si la suma del segundo dado y el tercero es menor que 5, el punto se mueve una unidad hacia arriba, si no, lo hace hacia abajo.
+# El proceso finaliza cuando la primera coordenada de la partícula, x, cumple que |x|>100
+# 1. Escribe una función que simule el movimiento de la partícula en función de t 
+# (Debes incluir un parámetro para limitar el número de movimientos por si nunca alcanza la 
+# condición de finalización) y devuelva: 
+#	- La progresión aleatoria definida
+#	- Cuantos pasos han sido necesarios para finalizar el movimiento
+#	- Si ha alcanzado o no la condición de salida
+# 2. Realiza una simulación concreta del proceso con t=1000 y represéntala gráficamente
+
+# Solución: Para probar las funciones solo hay que cargar el fichero y 
+# llamarlas con su nombre. 
+
+# Definimos una función lanzas_tres_dados, que consistirá en simular el lanzamiento de
+# 3 dados, devolvera un vector con 3 números que corresponderán a las 3 tiradas del dado
+# la función puede llamarse de la siguiente manera:
+# lanzar_tres_dados()
+
+# Seguidamente, creamos una funcion para simular el movimiento de la párticula con la progresión 
+# aleatoria pedida cuyo argumento sería el "tiempo" que queremos simular, creamos dos arrays 
+# que corresponderan a la posicion eje x y al eje y de la particula, siendo los últimos elementos
+# la posición actual de la párticula. Utilizamos también una variable pasos para contabilizar los pasos
+# (hemos considerado que ocurre cada paso por cada movimiento vertical u horizontal de la párticula ,
+# es decir, si el primer dado es 1 o 2 un paso sería la partícula moviendose una unidad a la derecha,
+# si la suma del segundo y tercer dado es menor que 5, la partícula se movería hacia arriba y sería
+# otro paso, esto se puede cambiar fácilmente a otra posible adaptación). 
+# Finalmente, utilizamos un booleano condicion_alcanzada para saber si la condición se ha cumplido o no.
+ 
+# Hacemos hincapié en que siempre vamos a limitar como máximo de tiempo 1000, la función devolverá
+# la progresión aleatoria seguida, la posición final, si la condición ha sido alcanzada o no y los pasos 
+# realizados.
+# Un ejemplo de ejecución sería:
+# simulacion_particula(1000)
+# Adjuntamos también dos imagenes con un ejemplo de ejecución de nuestra solución cuando cumple las condiciones 
+# y cuando no las cumple (ejemplo_ejecución_ejercicio_6_condicion_cumplida.png y ejemplo_ejecución_ejercicio_6_condicion_no_cumplida.png)
+
+lanzar_tres_dados = function(){
+	return(sample(1:6, size = 3, replace = TRUE))
+}
+
+simulacion_particula = function(t = 1000){
+	# Posición instante inicial partícula (0,0)
+	x <- vector("numeric", 1)
+	y <- vector("numeric", 1)
+	pasos <- 0
+	condicion_alcanzada <- FALSE
+	
+	# Limitamos el número de movimientos
+	maximo_tiempo <- min(t, 1000)
+	
+	for(i in 2:maximo_tiempo){
+		# Por cada tiempo t lanzamos 3 dados
+		tres_dados <- lanzar_tres_dados()
+		
+		# Si el primer dado es 1 o 2, movemos el punto una unidad a la derecha
+		# si no, a la izquierda
+		if(tres_dados[1] == 1 || tres_dados[1] == 2){
+			unidad_x <- 1
+		} else {
+			unidad_x <- -1
+		}
+
+		# Actualizamos posición x
+		pasos <- pasos + 1
+		x <- append(x, x[length(x)] + unidad_x)
+		y <- append(y, y[length(y)])
+		
+		# Si la primera coordenada de la particula cumple abs(x) > 100,
+		# el proceso finaliza	
+		if (abs(x[length(x)]) > 100){
+			condicion_alcanzada <- TRUE
+			break
+		}
+		
+		if(sum(tres_dados[2:3]) < 5){
+			unidad_y <- 1
+		} else {
+			unidad_y <- -1
+		}
+		
+		# Actualizamos posicion y		
+		pasos <- pasos + 1
+		x <- append(x, x[length(x)])
+		y <- append(y, y[length(y)] + unidad_y)
+	}
+	
+	plot(x,y, type = "b")
+	posicion_final <- paste("(", x[length(x)], ",", y[length(y)], ")")
+	progresion <- rbind(x,y)
+	return(list("Progresión aleatoria="=progresion,
+			"Posición final="= posicion_final,
+			"Condición alcanzada="=condicion_alcanzada,
+			"Pasos realizados="=pasos))
+}
