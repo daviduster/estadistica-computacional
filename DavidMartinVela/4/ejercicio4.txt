@@ -12,9 +12,17 @@
 # Solución:  Para probar las funciones solo hay que cargar el fichero y 
 # llamarlas con su nombre. 
 
-# Primero, creamos una función extraccion_urna para simular n_repeticiones extracciones de 
-# n_bolas 5 bolas con o sin reemplazamiento que, lo cuál controlamos con un parámetro boleano reemplazamiento, 
-# el calculo empírico de los sucesos que se piden anteriormente es la suma de las 
+# Primero, creamos una función extraer_5_bolas para simular la extracción de 5 bolas de una urna,
+# los argumentos de esta función son un boolean para indicar si esta extracción es con o sin
+# reemplazamiento. A esta función se le puede llamar:
+# extraer_5_bolas(FALSE)
+# extraer_5_bolas(TRUE)
+# Aunque se pedían sendas funciones, ya que es repetir código pero cambiando el argumento
+# he optado por unificarlas en una.
+
+# Seguidamente, definimos otra función, extraccion_urna para simular n_repeticiones extracciones 5
+# bolas con o sin reemplazamiento, lo cuál controlamos con un parámetro boleano reemplazamiento.
+# El calculo empírico de los sucesos que se piden anteriormente es la suma de las 
 # veces que se producen cada uno de ellos entre el total. Para ello en la función recorremos las columnas
 # del parámetro simulacion, el cual contiene el conjunto de experimentos de 5 en 5 n_repeticiones,
 # contamos los casos que se piden y calculamos la probabilidad dividiendo entre el total.
@@ -90,12 +98,20 @@ probabilidades_teoricas = function(reemplazamiento = FALSE){
 		"Probabilidad al menos 2 negras="=prob_al_menos_2_negras))
 } 
 
-extraccion_urna = function(n_repeticiones = 16, n_bolas = 5, reemplazamiento = FALSE){
+extraer_5_bolas = function(reemplazamiento = FALSE){
 	# Generamos vector de bolas
 	bolas <- rep( c("Roja", "Blanca", "Negra"), times = c(5,8,3))
+	# Número de bolas
+	n_bolas = 5
+
+	return(sample(bolas, size = n_bolas, replace = reemplazamiento))
+}
+
+extraccion_urna = function(n_repeticiones = 16, reemplazamiento = FALSE){
+
 
 	# Repeticiones n_repeticiones veces la extracción de n_bolas 
-	simulacion <- replicate(n_repeticiones, sample(bolas, size = n_bolas, replace = reemplazamiento))
+	simulacion <- replicate(n_repeticiones, extraer_5_bolas(reemplazamiento = reemplazamiento))
 
 	# Vemos los casos cuya probabilidad hay que calcular
 	casos_2_blancas <- 0
