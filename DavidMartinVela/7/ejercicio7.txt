@@ -1,0 +1,107 @@
+# EJERCICIO 7 DAVID MARTIN VELA
+# Antoine Gombard, Chevalier de Méré, 1º problema (El problema de la partida interrumpida). 
+# Dos jugadores A y B apuestan a cara o cruz, tirando una moneda (teóricamente, equilibrada). 
+# El jugador que primero llegue a seis puntos gana la apuesta. En un momento en que A tiene 
+# 4 puntos y B tiene 3 puntos, deben suspender el juego. ¿Cómo deben repartir la cantidad 
+# apostada para ser justos?
+# Resuelve el problema teóricamente.
+
+# 1) Escribe una función que, a partir del resultado en el momento en que se suspende el 
+# juego, simule quién ganaría.
+# 2) Escribe una función que permita realizar n veces esa simulación.
+# 3) Realiza una simulación con n=98765 e indica la diferencia entre los valores observados y 
+# los predichos.
+# 4) Mejora la función para que los puntos de cada jugador en el momento de la interrupción y 
+# el total de partidas para obtener la victoria sean arbitrarios. Incluye en valor máximo 
+# para garantizar que se detiene la simulación.
+
+# Solución: Parece que lo más justo sea tener en cuenta cuántas veces ganaría A y 
+# cuántas veces ganaría B, repitiéndose muchas veces. Como el juego se puede alargar como máximo cuatro 
+# partidas más, se consideran todos los resultados si se jugaran las tres partidas y se cuentan los casos
+# favorables a cada jugador. Las probabilidades de sacar cara y cruz son iguales, 1/2
+# Con esto, las probabilidades de que gane A son:
+# (Cara + cara) 1/4 + (Cara + cruz + cara) 1/8 + (cara + cruz + cruz + cara) + 1/16 +
+# (cruz + cara + cara) 1/8 + (cruz + cara + cruz + cara) 1/16 + (cruz + cruz + cara + cara ) 1/16 = 11/16
+# De igual manera para B
+# (cara + cruz + cruz + cruz) 1/16 + (cruz + cara + cruz + cruz) 1/16 +
+# (cruz + cruz + cara + cruz) 1/16 + (cruz + cruz + cruz) 1/8 = 1 - 11/16 = 5/16
+# Siendo esas la propoción que debe seguir para repartir la cantidad apostada.
+
+# Creamos una función simulacion_juego cuyos argumentos son la puntuación de A, la puntuación de B, y
+# los puntos necesarios para ganar, y simulamos el juego a partir de ese momento.
+# Se puede llamar a la función mediante su nombre simplemente con los valores predeterminados
+# simulacion_juego()
+
+# Seguidamente, creamos una función, n_veces_juego que permite realizar n veces esa simulación, 
+# ejecuta simplemente pasandole como argumento el número de veces que se quiere replicar el juego.
+# n_veces_juego(n = 98765) (adjuntamos una imagen ejemplo de ejecución en una imagen en la carpeta)
+# La función devolverá una tabla con la frecuencia de los ganadores, ganador A o ganador B, junto a la 
+# proporción de veces que gana cada uno. Vemos que para un n elevado, como es el caso de n=98765,
+# los valores observados coinciden con los teóricos cuando nuestras repeticiones son bastante grandes.
+
+# Finalmente, creamos una función simulacion_juego_mejorado, con los parámetros de simulacion_juego
+# pero arbitrarios, con el detalle de que las respectivas puntuaciones estarán limitadas 
+# al parámetro arbitrario de la puntuación necesaria para ganar.
+# Se puede llamar a la función de la siguiente manera:
+# simulacion_juego_mejorado()
+
+simulacion_juego = function(puntuacion_A = 4, puntuacion_B = 3, puntos_necesarios = 6){
+
+	no_ganador <- TRUE
+	moneda <- c("Cara","Cruz")
+
+	# Entramos en un bucle hasta que alguno gane	 
+	while(no_ganador){
+		lanzamiento_moneda <- sample(moneda, size = 1, replace = TRUE)
+
+		if(lanzamiento_moneda == "Cara"){
+			puntuacion_A <- puntuacion_A + 1
+		} else {
+			puntuacion_B <- puntuacion_B + 1
+		}
+
+		if(puntuacion_A == puntos_necesarios){
+			no_ganador <- FALSE
+			ganador <- "Ganador: A"
+		}
+
+		if(puntuacion_B == puntos_necesarios){
+			no_ganador <- FALSE
+			ganador <- "Ganador: B"
+		}
+	}
+
+	return(ganador)
+}
+
+n_veces_juego = function(n = 98765, puntuacion_A = 4, puntuacion_B = 3, puntos_necesarios = 6){
+	# Reproducimos el juego n veces
+	n_juegos <- replicate(n, simulacion_juego(puntuacion_A, puntuacion_B, puntos_necesarios))
+	
+	# Tabla de frecuencias 
+	freq <- table(n_juegos)
+	
+	# Proporción de veces que gana A o B
+	prob_A <- sum (n_juegos == "Ganador: A") / n
+	prob_B <- sum (n_juegos == "Ganador: B") / n
+
+	return(list("Frecuencias="=freq, 
+				"Proporción de veces que gana A="=prob_A, 
+				"Proporción de veces que gana B="=prob_B))
+}
+
+# Función mejorada con datos arbitrarios
+simulacion_juego_mejorado = function(){
+	
+	puntos_necesarios <- sample(1:1000, size = 1, replace = TRUE)
+	print(paste("Puntos para ganar",puntos_necesarios))
+	# No tiene sentido empezar con puntos arbitrarios mayores que los necesarios
+	# limitamos ambas puntuaciones a ello
+	puntuacion_A <- sample(0:puntos_necesarios, size = 1, replace = TRUE)
+	print(paste("Puntos que tiene A",puntuacion_A))
+	puntuacion_B <- sample(0:puntos_necesarios, size = 1, replace = TRUE)
+	print(paste("Puntos que tiene B",puntuacion_B))
+
+	# Simulamos el juego con estos valores
+	simulacion_juego(puntuacion_A, puntuacion_B, puntos_necesarios)
+}

@@ -36,34 +36,35 @@
 # Comparandolo con la superficie anterior podemos hacerlo contando el numero de "cajas", los cubos agrupados 
 # uno encima de otro, cuyo resultado al final seria el mismo
 
+
 simular_dos_dados <- function(n = 12, plot = FALSE) {
 	caras <- 1:6
-	dice_1 <- sample(caras, size = n, replace = TRUE)
-	dice_2 <- sample(caras, size = n, replace = TRUE)
+	dado_1 <- sample(caras, size = n, replace = TRUE)
+	dado_2 <- sample(caras, size = n, replace = TRUE)
 
 	# Frecuencias
-	freq_1 <- table(dice_1)
-	freq_2 <- table(dice_2)
+	freq_1 <- table(dado_1)
+	freq_2 <- table(dado_2)
 	freq_relativa_1 <- freq_1 / n
 	freq_relativa_2 <- freq_2 / n
 
 	if(plot == TRUE){
 
-		sorted_dice_1 <- sort(dice_1)
-		sorted_dice_2 <- sort(dice_2)
+		sorted_dado_1 <- sort(dado_1)
+		sorted_dado_2 <- sort(dado_2)
 		f_suma <- function(x, y) { x+y; }
-		z <- outer(sorted_dice_1, sorted_dice_2, f_suma)
+		z <- outer(sorted_dado_1, sorted_dado_2, f_suma)
 
 		persp(z,
 		main = "Superficie obtenida ejercicio 2",
-		xlab = "dice_1",
-		ylab = "dice_2",
+		xlab = "dado_1",
+		ylab = "dado_2",
 		zlab = "Outer/ Multiplication",
 		ticktype = "simple")
 	}
 
 	# Probabilidad de que la suma sea mayor que 9
-	prob_9 <- sum((dice_1 + dice_2) > 9 ) / n
+	prob_9 <- sum((dado_1 + dado_2) > 9 ) / n
 
 	return( list("Frecuencias primer dado=" =freq_1,"Frecuencias segundo dado=" = freq_2, 
 "Frecuencias relativas primer dado=" = freq_relativa_1, "Frecuencias relativas segundo dado=" =freq_relativa_2, "Probabilidad de que la suma sea mayor que 9 = " =prob_9) )
