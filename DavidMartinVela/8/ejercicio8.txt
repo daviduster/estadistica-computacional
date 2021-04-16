@@ -1,0 +1,100 @@
+# EJERCICIO 8 DAVID MARTIN VELA
+# Antoine Gombard, Chevalier de Méré, 2º problema. Se pensaba que era ventajoso apostar por obtener al menos un 
+# seis en una serie de 4 lanzamientos de un dado. Se argumentó que también sería ventajoso apostar por obtener al 
+# menos un doble seis en una serie de 24 lanzamientos con un par de dados. ¿Son ciertas cada una de las suposiciones? 
+# (No es necesario que resuelvas teóricamente los apartados)
+# 1) Escribe una función que simule el lanzamiento de un dado n veces y devuelva el número de seises que se obtienen
+# 2) Escribe una función que permita realizar j veces esa simulación
+# 3) Siendo n=4 y j=10000 realiza una simulación e indica si el valor observado es compatible con la hipótesis
+# 4) Escribe una función que simule el lanzamiento de dos dados n veces y devuelva el número de dobles seises que se obtienen
+# 5) Escribe una función que permita realizar j veces esa simulación
+# 6) Siendo n=24 y j=10000 realiza una simulación e indica si el valor observado es compatible con la hipótesis
+
+# Solución: 
+# Parte teórica (aunque no sea necesaria)
+# Al lanzar 4 veces un dado, se pueden obtener 6*6*6*6 = 1296 resultados. De esos resultados
+# puede salir resultados de 1 a 5 cuatro veces seguidas, 5*5*5*5 = 625 veces, luego los resultados que contienen
+# al menos un 6 son los totales menos estos, 1296 - 625 = 671. Luego en 4 lanzamientos de un dado hay más 
+# resultados que contienen algún 6 (671) que resultados con ningún seis (625), por eso es más ventajoso.
+# 671/1296 = 0.51774
+# 625/1296 = 0.48225
+
+# Respecto a la segunda suposición, un par de dados son 6*6 = 36 resultados, 24 lanzamientos de un par de dados
+# será multiplicar 36 24 veces, 36^24 partidas posibles.
+# Vemos cuantas de esas partidas son favorables a obtener al menos un doble 6, como hemos visto antes,
+# en un par de dados hay 36-1=35 resultados que no son doble 6, 35^24 con ningun doble 6.
+# La proporción de partidas con ningún doble 6 sería: 
+# (35^24) / (36^24) = 0.5085961
+# Mientras que la proporción con al menos un doble seis
+# 1 - [(35^24) / (36^24)] = 0.4914039
+# En este caso saldría perdiendo el que apuesta, aunque la diferencia sea muy pequeña si se juega muchas veces
+# esta desventaja se puede llegar a notar.
+
+# Parte práctica
+# 1) Creamos la función lanzar_dado_n_veces, que simula el lanzamiento de un dado n veces (lanzar_dado)
+# y devuelve el número de lanzamientos cuyo resultado ha sido un 6.
+# lanzar_dado_n_veces(n = 4)
+# 2) Seguidamente, definimos la función simulacion_dado(j, n), que permita realizar j veces la simulación
+# de lanzar el dado n veces.
+# Contamos las veces que ha salido al menos un 6, como la función lanzar_dado_n_veces devuelve la
+# suma de veces que el lanzamiento ha sido un 6, bastará con comprobar los lanzamientos que son mayores
+# que 0.
+# simulacion_dado(j = 10000, n = 4)
+# 3) Ejecutando la función con j = 10000 y n = 4, obtenemos el resultado de 0.51809, 
+# lo cúal coincide con el valor teórico que esperabamos, adjuntamos un ejemplo 
+# de la ejecución en un_dado.png
+# 4) Realizamos el mismo procedimiento que hemos hecho con un dado, pero con dos dados,
+# creamos la función lanzar_dos_dados que simula el lanzamiento de dos dados,
+# y la función lanzar_dos_dados_n_veces, con la excepción de que en la función lanzar dos 
+# dados devolvemos la suma de ambos dados, así en lanzar_dos_dados_n_veces para contar
+# los lanzamientos que han tenido doble seis comprobaremos aquellos cuya suma es 6+6=12
+# lanzar_dos_dados()
+# lanzar_dos_dados_n_veces(n=24)
+# 5) Como hemos hecho en los apartados anteriores, creamos la función simulacion_dos_dados, 
+# la cuál nos permite replicar j veces el experimento de lanzar n veces 2 dados.
+# Devolvemos la proporción de veces cuyos resultados han sido al menos un doble seis en n tiradas
+# 6) Ejecutando, simulacion_dos_dados(j = 10000, n = 24), obtenemos 0.4905,
+# lo cúal coincide con el valor teórico que esperabamos, adjuntamos un ejemplo 
+# de la ejecución en dos_dados.png
+
+lanzar_dado = function(){
+    caras <- 1:6
+    # Devolvemos el lanzamiento de 1 dado
+    return(sample(caras, size = 1, replace = TRUE))
+}
+
+lanzar_dado_n_veces = function(n = 10){
+    lanzamientos <- replicate(n, lanzar_dado())
+    suma_de_seis <- sum(lanzamientos == 6) 
+
+    return(suma_de_seis)
+}
+
+simulacion_dado = function(j = 10000, n = 4){
+    lanzamientos <- replicate(j, lanzar_dado_n_veces(n))
+    
+    casos_seis <- sum(lanzamientos > 0) / j
+
+    return(paste("Proporción de veces que ha salido un 6 con un dado en 4 tiradas: ", casos_seis))
+}
+
+lanzar_dos_dados = function(){
+    caras <- 1:6
+    # Devolvemos el lanzamiento de 2 dados
+    return(sum(sample(caras, size = 2, replace = TRUE)))
+}
+
+lanzar_dos_dados_n_veces = function(n = 10){
+    lanzamientos <- replicate(n, lanzar_dos_dados())
+    suma_dos_seis <- sum(lanzamientos == 12)
+
+    return(suma_dos_seis)
+}
+
+simulacion_dos_dados = function(j = 10000, n = 24){
+    lanzamientos <- replicate(j, lanzar_dos_dados_n_veces(n))
+    
+    casos_dos_seis <- sum(lanzamientos > 0) / j
+
+    return(paste("Proporción de veces que han salido dobles 6 con dos dados en 24 tiradas: ", casos_dos_seis))
+}
