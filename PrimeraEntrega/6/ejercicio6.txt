@@ -76,7 +76,8 @@ simulacion_particula = function(t = 1000){
 			condicion_alcanzada <- TRUE
 			break
 		}
-		
+		# Si la suma del segundo dado y el tercero es menor que 5,
+		# el punto se mueve una unidad hacia arriba, si no, lo hace hacia abajo.
 		if(sum(tres_dados[2:3]) < 5){
 			unidad_y <- 1
 		} else {
